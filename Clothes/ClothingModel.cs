@@ -7,7 +7,7 @@ namespace Clothes
     [Serializable]
     public class ClothingModel : INotifyPropertyChanged
     {
-        private string clothingType;
+        private string clothingType = "New Clothing";
         /// <summary>
         /// The type description of the item of clothing (e.g. jumper)
         /// </summary>

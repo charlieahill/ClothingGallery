@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -31,7 +33,26 @@ namespace Clothes
             InitializeComponent();
             clothes = SaveLoad.Load(FilePath);
             RefreshListBoxItemsSource();
+            RefreshClothingTypeComboBoxItemsSource();
             ClothesListBox.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// Refreshes the item source for the clothing type list box
+        /// </summary>
+        private void RefreshClothingTypeComboBoxItemsSource()
+        {
+            List<string> ClothingTypeOptions = new();
+
+            ClothingTypeOptions.Add("All");
+
+            foreach (ClothingModel clothingItem in clothes)
+                if (!ClothingTypeOptions.Contains(clothingItem.ClothingType))
+                    ClothingTypeOptions.Add(clothingItem.ClothingType);
+
+            ClothingTypeComboBox.ItemsSource = null;
+            ClothingTypeComboBox.ItemsSource = ClothingTypeOptions;
+            ClothingTypeComboBox.SelectedIndex = 0;
         }
 
         /// <summary>
@@ -49,14 +70,26 @@ namespace Clothes
         {
             clothes.Add(new ClothingModel());
             RefreshListBoxItemsSource();
+            ClothingTypeComboBox.SelectedItem = ClothingTypeComboBox.Items[0];
+        }
+
+        private void FilterClothesToShowInListView()
+        {
+            RefreshListBoxItemsSource();
         }
 
         private void RefreshListBoxItemsSource()
         {
             ClothesListBox.ItemsSource = null;
-            ClothesListBox.ItemsSource = clothes;
 
-            if (clothes.Count > 0)
+            if (ClothingTypeComboBox.SelectedItem == null) return;
+
+            if(ClothingTypeComboBox.SelectedIndex == 0)
+                ClothesListBox.ItemsSource = clothes;
+            else
+                ClothesListBox.ItemsSource = clothes.Where(x => x.ClothingType.ToString() == ClothingTypeComboBox.SelectedItem.ToString()).ToList();
+
+            if (ClothesListBox.Items.Count > 0)
                 ClothesListBox.SelectedItem = ClothesListBox.Items[ClothesListBox.Items.Count - 1];
         }
 
@@ -202,6 +235,16 @@ namespace Clothes
 
             Uri UriSource = new Uri(filePath);
             ImageBox.Source = new BitmapImage(UriSource);
+        }
+
+        private void ClothingTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            FilterClothesToShowInListView();
+        }
+
+        private void TextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            RefreshClothingTypeComboBoxItemsSource();
         }
     }
 }
