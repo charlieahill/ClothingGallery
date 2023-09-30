@@ -9,7 +9,7 @@
         Title="Clothing Library" Height="800" Width="1000" MinHeight="800" MinWidth="1000">
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="320"/>
+            <ColumnDefinition Width="330"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
@@ -21,12 +21,33 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <ComboBox Name="ClothingTypeComboBox" Margin="0 0 0 5" SelectionChanged="ClothingTypeComboBox_SelectionChanged"></ComboBox>
-            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <ComboBox Name="ClothingTypeComboBox" Margin="0 0 0 5" SelectionChanged="ClothingTypeComboBox_SelectionChanged"></ComboBox>
+                <CheckBox Grid.Column="1" Checked="CheckBox_Checked" Unchecked="CheckBox_Checked" Margin="5 5 0 0">Show Archived</CheckBox>
+            </Grid>
+
             <ListView Name="ClothesListBox" Grid.Row="1" ItemsSource="{Binding Components, Mode=OneWay}" SelectionChanged="ClothesListBox_SelectionChanged" SelectionMode="Single">
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding ClothingType}"/>
+                        <Border Background="LightGoldenrodYellow" BorderBrush="LightSlateGray" BorderThickness="1" Padding="4">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="160"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Text="{Binding ClothingType}"/>
+                                <TextBlock Grid.Column="1" Text="{Binding Colour}"/>
+                                <TextBlock Grid.ColumnSpan="2" Grid.Row="1" Text="{Binding Notes}"/>
+                            </Grid>
+                        </Border>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
@@ -35,7 +56,8 @@
         </Grid>
 
         <!--DATE, LOCATION, TEXT-->
-        <Grid Grid.Column="1">
+        <Border Grid.Column="1" Background="Cornsilk" BorderBrush="LightSlateGray" BorderThickness="1" Padding="5">
+        <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -57,7 +79,7 @@
                     <ColumnDefinition Width="auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBox FontSize="14" FontStyle="Italic" Text="{Binding ClothingType, UpdateSourceTrigger=PropertyChanged}" LostFocus="TextBox_LostFocus"/>
-                <Button Grid.Column="1" Margin="10 0 0 0" Padding="5" Content="Archive"></Button>
+                <Button Grid.Column="1" Margin="10 0 0 0" Padding="5" Content="Archive" Click="ArchiveButton_Click"/>
             </Grid>
 
             <TextBlock Grid.Row="1" Grid.Column="0" Margin="0 0 0 20" FontSize="12" FontStyle="Italic" Text="Colour:"/>
@@ -95,5 +117,6 @@
                 <Button Grid.Row="2" Grid.Column="2" Margin="10 10 10 0" Padding="4" Name="ButtonNextImage" Click="ButtonNextImage_Click">→</Button>
             </Grid>
         </Grid>
+        </Border>
     </Grid>
 </Window>

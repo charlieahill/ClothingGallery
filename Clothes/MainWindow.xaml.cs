@@ -84,10 +84,20 @@ namespace Clothes
 
             if (ClothingTypeComboBox.SelectedItem == null) return;
 
-            if(ClothingTypeComboBox.SelectedIndex == 0)
-                ClothesListBox.ItemsSource = clothes;
+            if (ShowArchivedItems)
+            {
+                if (ClothingTypeComboBox.SelectedIndex == 0)
+                    ClothesListBox.ItemsSource = clothes;
+                else
+                    ClothesListBox.ItemsSource = clothes.Where(x => x.ClothingType.ToString() == ClothingTypeComboBox.SelectedItem.ToString()).ToList();
+            }
             else
-                ClothesListBox.ItemsSource = clothes.Where(x => x.ClothingType.ToString() == ClothingTypeComboBox.SelectedItem.ToString()).ToList();
+            {
+                if (ClothingTypeComboBox.SelectedIndex == 0)
+                    ClothesListBox.ItemsSource = clothes.Where(x => !x.Archived);
+                else
+                    ClothesListBox.ItemsSource = clothes.Where(x => x.ClothingType.ToString() == ClothingTypeComboBox.SelectedItem.ToString()).Where(x => !x.Archived).ToList();
+            }
 
             if (ClothesListBox.Items.Count > 0)
                 ClothesListBox.SelectedItem = ClothesListBox.Items[ClothesListBox.Items.Count - 1];
@@ -245,6 +255,21 @@ namespace Clothes
         private void TextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             RefreshClothingTypeComboBoxItemsSource();
+        }
+
+        private void ArchiveButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (DataContext == null) return;
+            (DataContext as ClothingModel).Archived = !(DataContext as ClothingModel).Archived;
+            RefreshListBoxItemsSource();
+        }
+
+        bool ShowArchivedItems = false;
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            ShowArchivedItems = (bool)(sender as CheckBox).IsChecked;
+            RefreshListBoxItemsSource();
         }
     }
 }
